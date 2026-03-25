@@ -13,7 +13,7 @@ function App() {
           Email: vergelsantiago0509@gmail.com <br />
           Section: INF231 <br />
           GitHub: <a href="https://www.github.com/vewnioh" target="_blank" rel="noopener noreferrer">vewnioh</a> <br />
-          Fun fact: I love the fact 
+          Fun fact: I love the fact that...
         </p>
       </header>
     </div>
