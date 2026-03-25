@@ -1,21 +1,33 @@
-import './App.css'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./components/Layout";
+import ArticlePage from "./pages/ArticlePage";
+import HomePage from "./pages/HomePage";
+import AboutPage from "./pages/AboutPage";
 
+const routes = [
+  { 
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true, // Use index: true for the default home route
+        element: <HomePage />,
+      },
+      {
+        path: "about",
+        element: <AboutPage />,
+      },
+      {
+        path: "articles", // Updated to plural to match NavBar
+        element: <ArticlePage />,
+      },
+    ],
+  },
+];
+
+const router = createBrowserRouter(routes);
 function App() {
-  return (
-      <div class Name="App">
-        <header className="App-header">
-          <h1>Welcome to my React App!</h1>
-          <p>
-            Name: Vergel Adrian Santiago<br/>
-            Email: vergelsantiago@example.com<br/>
-            Other Personal Info: Music enthusiast, 20 years old<br/>
-            <div>
-              <a href="https://github.com/vewnioh/Santiago-WebProg" target="github">Github Profile</a>
-            </div>
-          </p>
-          </header>
-      </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
