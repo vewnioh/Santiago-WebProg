@@ -1,71 +1,164 @@
+import { useParams } from 'react-router-dom';
 import Button from '../components/Button';
+import articles from '../assets/article-content.js';
 
-const ArticlePage = () => {
-  const myArticles = [
-    {
-      id: "01",
-      title: "TodaGo: AI Tricycle Dispatching",
-      desc: "An exploration of how I built an AI-powered platform to streamline tricycle dispatching for my capstone project."
-    },
-    {
-      id: "02",
-      title: "React Attendance Tracking",
-      desc: "A technical write-up on creating a modular student attendance tracker using React.js and modern state management."
-    },
-    {
-      id: "03",
-      title: "The MERN Stack Journey",
-      desc: "Sharing my experience designing modular web applications using MongoDB, Express, React, and Node.js."
-    },
-    {
-      id: "04",
-      title: "Flutter for Mobile Design",
-      desc: "Discussing the UI/UX principles I applied while developing a mobile app with the Flutter framework."
-    }
-  ];
+function getReadTime(content) {
+  const words = content.join(' ').split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+function ArticlePage() {
+  const { name } = useParams();
+  const article = articles.find((a) => a.name === name);
+
+  if (!article) {
+    return (
+      <div className="flex w-full flex-col">
+        <section className="border-b border-neutral-800 bg-neutral-950 px-6 py-14 lg:px-12">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-3xl font-bold text-white">Review not found</h1>
+            <div className="mt-6"><Button to="/articles">Back to Reviews</Button></div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const readTime = getReadTime(article.content);
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      {/* Featured Header */}
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">Learning Logs</p>
-        <h1 className="mt-2 text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
-          DevLogs & Project Deep Dives
-        </h1>
-        <p className="mt-4 max-w-lg text-sm leading-7 text-zinc-600 sm:text-base">
-          This section documents my technical progress as a BSIT student, covering everything from capstone updates to web frameworks.
-        </p>
-        <div className="mt-6">
-          <Button to="/">Back Home</Button>
+    <div className="flex w-full flex-col">
+
+      {/* HEADER */}
+      <section className="border-b border-neutral-800 bg-neutral-950 px-6 py-12 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-7">
+            <Button to="/articles">← Back to Reviews</Button>
+          </div>
+
+          <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-400">
+            {article.genre}
+          </p>
+          <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
+            {article.title}
+          </h1>
+
+          {/* Metadata bar */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-neutral-800 pt-6">
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-600">Director</p>
+              <p className="text-sm text-neutral-300">{article.director}</p>
+            </div>
+            <div className="h-8 w-px bg-neutral-800" />
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-600">Year</p>
+              <p className="text-sm text-neutral-300">{article.year}</p>
+            </div>
+            <div className="h-8 w-px bg-neutral-800" />
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-600">Read Time</p>
+              <p className="text-sm text-neutral-300">{readTime} min</p>
+            </div>
+            <div className="h-8 w-px bg-neutral-800" />
+            {/* Rating */}
+            <div className="flex flex-col gap-0.5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-600">Rating</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-bold text-amber-400 tabular-nums">{article.rating}</span>
+                <span className="text-xs text-neutral-600">/ 10</span>
+              </div>
+            </div>
+            {/* Rating bar */}
+            <div className="ml-auto hidden sm:flex flex-col gap-1.5 min-w-[140px]">
+              <div className="h-1 w-full rounded-full bg-neutral-800">
+                <div
+                  className="h-1 rounded-full bg-amber-400"
+                  style={{ width: `${(article.rating / 10) * 100}%` }}
+                />
+              </div>
+              <p className="text-[9px] font-semibold uppercase tracking-widest text-neutral-600">Score</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Article Grid */}
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">Featured Articles</p>
-          <h2 className="mt-2 text-2xl font-semibold text-zinc-900">My Project Portfolio</h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {myArticles.map((article) => (
-            <article key={article.id} className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-              <div className="flex aspect-[4/3] items-center justify-center rounded-[1.25rem] bg-zinc-200 mb-4 overflow-hidden">
-                <img 
-                  src={`https://picsum.photos/seed/${article.id}/400/300`} 
-                  alt={article.title} 
-                  className="h-full w-full object-cover grayscale" 
-                />
-              </div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">Article {article.id}</p>
-              <h3 className="mt-2 text-lg font-semibold text-zinc-900">{article.title}</h3>
-              <p className="mt-3 text-xs leading-6 text-zinc-600">{article.desc}</p>
-              <Button className="mt-4">Read Article</Button>
-            </article>
-          ))}
+      {/* HERO IMAGE */}
+      <section className="border-b border-neutral-800 bg-neutral-900 px-6 py-10 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="overflow-hidden rounded-2xl border border-neutral-800">
+            <img
+              src={article.image}
+              alt={article.title}
+              className="w-full h-[420px] object-cover opacity-75"
+            />
+          </div>
         </div>
       </section>
+
+      {/* CONTENT */}
+      <section className="border-b border-neutral-800 bg-neutral-950 px-6 py-14 lg:px-12">
+        <div className="mx-auto max-w-7xl grid gap-12 lg:grid-cols-3">
+
+          {/* Main text */}
+          <div className="lg:col-span-2">
+            <h2 className="mb-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-neutral-600">Full Review</h2>
+            <div className="space-y-7">
+              {article.content.map((paragraph, index) => (
+                <p key={index} className="text-[15px] leading-8 text-neutral-400 first-letter:text-3xl first-letter:font-bold first-letter:text-white first-letter:float-left first-letter:mr-2 first-letter:leading-none" style={index === 0 ? {} : {}}>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+            <div className="mt-10 pt-6 border-t border-neutral-800">
+              <Button to="/articles">← Back to Reviews</Button>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="flex flex-col gap-5">
+            {/* Score card */}
+            <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-6">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-600 mb-4">CineVault Score</p>
+              <div className="flex items-end gap-2 mb-3">
+                <span className="text-5xl font-bold text-amber-400 tabular-nums leading-none">{article.rating}</span>
+                <span className="text-neutral-600 mb-1">/ 10</span>
+              </div>
+              <div className="h-1.5 w-full rounded-full bg-neutral-800">
+                <div
+                  className="h-1.5 rounded-full bg-amber-400"
+                  style={{ width: `${(article.rating / 10) * 100}%` }}
+                />
+              </div>
+              <p className="mt-3 text-xs text-neutral-600 leading-5">
+                {article.rating === 10
+                  ? "A perfect film. Essential viewing."
+                  : article.rating >= 9
+                  ? "A masterpiece. Highly recommended."
+                  : "Outstanding. Well worth your time."}
+              </p>
+            </div>
+
+            {/* About card */}
+            <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-6">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-600 mb-3">About this Review</p>
+              <p className="text-sm leading-7 text-neutral-500">
+                Part of the CineVault editorial series — in-depth critical examinations of the films that have shaped world cinema across every era and genre.
+              </p>
+            </div>
+
+            {/* CTA */}
+            <div className="rounded-xl border border-amber-400/15 bg-neutral-900 p-6">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-400 mb-2">More Reviews</p>
+              <p className="text-sm leading-6 text-neutral-400 mb-5">Explore the full CineVault review library.</p>
+              <Button to="/articles" variant="primary">Browse All</Button>
+            </div>
+          </aside>
+
+        </div>
+      </section>
+
     </div>
   );
-};
+}
 
 export default ArticlePage;

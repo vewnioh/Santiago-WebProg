@@ -1,133 +1,110 @@
 import Button from "../components/Button";
-import githubLogo from "../assets/images/githublogo.png";
-import linkedinLogo from "../assets/images/lilogo.png";
-import gmailLogo from "../assets/images/gmailogo.png";
 
-const STATS = [
-  { label: "Project Repositories", value: "08" },
-  { label: "Project Collaboration", value: "03" },
-  { label: "Live Projects", value: "01" },
-  { label: "Frontend Frameworks", value: "06" },
+const stats = [
+  { value: "1,000+", label: "Films Reviewed" },
+  { value: "50+",    label: "Genres Covered" },
+  { value: "10K",    label: "Monthly Readers" },
+  { value: "100",    label: "Years of Cinema" },
 ];
 
-const SOCIAL_LINKS = [
+const features = [
   {
-    platform: "GitHub",
-    handle: "@vewnioh",
-    image: githubLogo,
-    description: "Check out my repositories where I document my progress in React, Tailwind CSS, and mobile development projects at National University.",
-    link: "https://github.com/vewnioh",
+    label: "Critical Analysis · No Spoilers",
+    title: "In-Depth Reviews",
+    body: "Every review goes beyond the surface. We examine craft, context, and cultural impact — giving you everything you need to appreciate a film on a deeper level.",
+    image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=600&q=80",
+    to: "/articles",
+    cta: "Read Reviews",
   },
   {
-    platform: "LinkedIn",
-    handle: "Vergel Santiago",
-    image: linkedinLogo,
-    description: "Let's connect professionally! I share updates regarding my journey as a BSIT student and my latest web application milestones.",
-    link: "https://www.linkedin.com/in/vergelsantiago/",
+    label: "Auteur Profiles · Career Deep Dives",
+    title: "Director Spotlights",
+    body: "From Kubrick to Kurosawa, our director profiles trace the full arc of cinema's greatest visionaries — their influences, obsessions, and lasting legacies.",
+    image: "https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?auto=format&fit=crop&w=600&q=80",
+    to: "/about",
+    cta: "Learn More",
   },
   {
-    platform: "Email",
-    handle: "Contact Me",
-    image: gmailLogo,
-    description: "Feel free to reach out for collaboration on school projects, technical inquiries, or discussions regarding modern frontend technologies.",
-    link: "mailto:vergelsantiago0509@gmail.com",
+    label: "Genre · Era · Mood",
+    title: "Curated Watchlists",
+    body: "Not sure what to watch? Our curated lists sort films by genre, decade, director, and mood — so you always find the right film for the right moment.",
+    image: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=600&q=80",
+    to: "/articles",
+    cta: "Explore Lists",
   },
 ];
 
 const HomePage = () => {
   return (
-    // The parent div provides the spacing ('gap-6') that creates the double-line effect [cite: 498]
-    <div className="flex w-full flex-col gap-6 bg-zinc-100">
-      
-      {/* --- HERO SECTION --- [cite: 499-531] */}
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            
-            <div className="space-y-6">
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
-                Welcome to my Journey
-              </h1>
-              <p className="max-w-md text-sm leading-7 text-zinc-600 sm:text-base">
-                I'm Vergel Adrian G. Santiago, a 3rd-year BSIT student at National University. 
-                I specialize in building clean, intuitive layout systems for modern web and mobile applications.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button to="/about" variant="primary">
-                  Learn More
-                </Button>
-                <Button to="/articles" variant="secondary">
-                  Learning Logs
-                </Button>
-              </div>
-            </div>
+    <div className="flex w-full flex-col">
 
-            {/* Cleaned Image Container - Outlines removed */}
-            <div className="overflow-hidden rounded-3xl">
-              <div className="aspect-video w-full bg-zinc-200">
-                <img 
-                  src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Web Development Code" 
-                  className="h-full w-full object-cover grayscale" 
-                />
-              </div>
-            </div>
+      {/* HERO — full-bleed cinematic */}
+      <section className="relative flex min-h-screen flex-col justify-end overflow-hidden border-b border-neutral-800">
+        {/* Background image */}
+        <img
+          src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=1400"
+          alt="Cinema theater"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        {/* Gradient overlay — dark at bottom, lighter at top */}
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/75 to-neutral-950/20" />
+
+        {/* Content anchored to bottom */}
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-20 pt-40 lg:px-12">
+          <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.35em] text-amber-400">
+            Your Cinema Companion
+          </p>
+          <h1 className="mb-6 max-w-3xl text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Discover Cinema<br />
+            <span className="text-neutral-400">Like Never Before.</span>
+          </h1>
+          <p className="mb-9 max-w-lg text-base leading-7 text-neutral-400">
+            CineVault is home to in-depth reviews, essays, and deep dives on the films
+            that define world cinema. From classic masterpieces to modern benchmarks —
+            every frame matters.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button to="/articles" variant="primary">Browse Reviews</Button>
+            <Button to="/about" variant="secondary">About CineVault</Button>
           </div>
         </div>
-      </section>
 
-      {/* --- KPI SECTION --- [cite: 532-579] */}
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-zinc-900">Quick overview blocks</h2>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {STATS.map((stat, i) => (
-              <div key={i} className="rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-                <p className="text-2xl font-bold text-zinc-900">{stat.value}</p>
-                <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">
-                  {stat.label}
-                </p>
+        {/* Bottom stats strip */}
+        <div className="relative z-10 border-t border-neutral-800/60 bg-neutral-950/80 backdrop-blur-sm">
+          <div className="mx-auto max-w-7xl grid grid-cols-2 divide-x divide-neutral-800/60 lg:grid-cols-4">
+            {stats.map(({ value, label }) => (
+              <div key={label} className="px-6 py-5 sm:px-8">
+                <p className="text-2xl font-bold text-amber-400">{value}</p>
+                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-600">{label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* --- PROFESSIONAL DIRECTORY --- [cite: 582-634] */}
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      {/* FEATURES */}
+      <section className="border-b border-neutral-800 bg-neutral-950 px-6 py-16 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10">
-            <h2 className="text-3xl font-bold uppercase tracking-tighter text-zinc-900">Professional Directory</h2>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-neutral-500">What We Offer</p>
+            <h2 className="text-2xl font-bold tracking-tight text-white">For the Serious Film Fan</h2>
           </div>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {SOCIAL_LINKS.map((social, i) => (
-              <article key={i} className="flex flex-col rounded-3xl border-2 border-zinc-900 bg-zinc-100 p-5">
-                <div className="flex aspect-[4/3] items-center justify-center rounded-[1.25rem] bg-zinc-200 mb-6 overflow-hidden border-2 border-zinc-300">
+          <div className="grid gap-6 md:grid-cols-3">
+            {features.map((f) => (
+              <article key={f.title} className="group flex flex-col rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden hover:border-neutral-700 transition-colors duration-300">
+                <div className="aspect-[16/9] overflow-hidden bg-neutral-800">
                   <img
-                    src={social.image}
-                    alt={social.platform}
-                    className="h-24 w-24 object-contain grayscale"
+                    src={f.image}
+                    alt={f.title}
+                    className="h-full w-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
                   />
                 </div>
-                
-                <h3 className="text-lg font-semibold text-zinc-900">{social.platform}</h3>
-                <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-zinc-500">{social.handle}</p>
-                
-                <p className="mt-4 grow text-sm leading-6 text-zinc-600 mb-6">
-                  {social.description}
-                </p>
-                
-                <Button 
-                  to={social.link.startsWith('mailto') ? null : social.link} 
-                  variant="primary"
-                  className="w-full"
-                >
-                  {social.platform === "Email" ? "Send Email" : "Visit Profile"}
-                </Button>
+                <div className="flex flex-col flex-1 p-6">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-400">{f.label}</p>
+                  <h3 className="mt-2 text-lg font-semibold text-white">{f.title}</h3>
+                  <p className="mt-3 grow text-sm leading-6 text-neutral-500">{f.body}</p>
+                  <Button to={f.to} variant="secondary" className="mt-6 self-start">{f.cta}</Button>
+                </div>
               </article>
             ))}
           </div>

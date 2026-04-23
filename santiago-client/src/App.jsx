@@ -1,33 +1,49 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./components/Layout";
-import ArticlePage from "./pages/ArticlePage";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
+import './App.css';
+import Layout from './components/Layout';
+import AboutPage from './pages/AboutPage';
+import ArticleListPage from './pages/ArticleListPage';
+import ArticlePage from './pages/ArticlePage';
+import HomePage from './pages/HomePage';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import NotFoundPage from './pages/NotFoundPage';
 
-const routes = [
-  { 
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        index: true, // Use index: true for the default home route
-        element: <HomePage />,
-      },
-      {
-        path: "about",
-        element: <AboutPage />,
-      },
-      {
-        path: "articles", // Updated to plural to match NavBar
-        element: <ArticlePage />,
-      },
-    ],
+const routes = [{
+  path: '/',
+  element: <Layout />,
+  // Error element
+  errorElement: <NotFoundPage />,
+  children: [{
+    // Path declaration
+    path: '/',
+    element: <HomePage />
   },
-];
+  {
+    path: '/about',
+    element: <AboutPage />
+  },
+  {
+    path: '/articles',
+    element: <ArticleListPage />
+  },
+  {
+    path: '/articles/:name', // -->articles/learn-react
+    element: <ArticlePage />
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />
+  }
+  ]
+}]
 
 const router = createBrowserRouter(routes);
+
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;
