@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:/Users/vergel adrian/codeko/santiago-webprog1\" mv santiago-client/src/pages/ArcticlePage.jsx santiago-client/src/pages/ArticlePage.jsx)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\vergel adrian\\codeko\\santiago-webprog1\\santiago-client\\src\\pages"
+    ]
+  }
+}
