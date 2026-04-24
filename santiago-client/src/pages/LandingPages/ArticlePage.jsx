@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import Button from '../components/Button';
-import articles from '../assets/article-content.js';
+import Button from '../../components/Button';
+import articles from '../../assets/article-content.js';
 
 function getReadTime(content) {
   const words = content.join(' ').split(/\s+/).length;

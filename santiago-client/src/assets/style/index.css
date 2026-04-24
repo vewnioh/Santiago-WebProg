@@ -1,1 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@200..800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-display: 'DM Serif Display', ui-serif, Georgia, serif;
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes filmscroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes bulb-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.85));
+  }
+  20%, 24%, 55% {
+    opacity: 0.3;
+    filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.2));
+  }
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-filmscroll {
+  animation: filmscroll 55s linear infinite;
+}
+
+.animate-bulb-flicker {
+  animation: bulb-flicker 7s infinite;
+}
+
+.animate-ticker {
+  animation: ticker-scroll 40s linear infinite;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #09090b;
+  color: #fafafa;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain overlay for cinematic texture */
+.film-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}

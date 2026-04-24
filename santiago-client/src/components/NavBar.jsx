@@ -56,6 +56,14 @@ const NavBar = () => {
               {link.label}
             </NavLink>
           ))}
+
+          <NavLink
+            to="/auth/signin"
+            className="group relative ml-2 flex items-center gap-2 rounded-full border border-amber-400/40 bg-amber-400/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-amber-400 transition-all duration-200 hover:bg-amber-400 hover:text-neutral-950 hover:shadow-[0_0_18px_rgba(251,191,36,0.35)]"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400 transition-colors group-hover:bg-neutral-950" />
+            Sign In
+          </NavLink>
         </nav>
 
       </div>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
-import ArticleList from '../components/ArticleList';
-import articles from '../assets/article-content.js';
+import Button from '../../components/Button';
+import ArticleList from '../../components/ArticleList';
+import articles from '../../assets/article-content.js';
 
 const featured = articles[0];
 const rest = articles.slice(1);

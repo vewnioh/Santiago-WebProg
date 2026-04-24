@@ -1,4 +1,4 @@
-import Button from "../components/Button";
+import Button from "../../components/Button";
 
 const stats = [
   { value: "1,000+", label: "Films Reviewed" },

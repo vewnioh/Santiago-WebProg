@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import Button from '../components/Button';
-import deadPoetsSociety from '../assets/images/deadpoetsociety.jpg';
-import oblivion from '../assets/images/oblivion.jpg';
-import goingOn30 from '../assets/images/13goingon30.jpg';
-import theSixthSense from '../assets/images/thesixthsense.jpg';
-import theAmazingSpiderMan from '../assets/images/theamazingspider-man.jpg';
+import Button from '../../components/Button';
+import deadPoetsSociety from '../../assets/images/deadpoetsociety.jpg';
+import oblivion from '../../assets/images/oblivion.jpg';
+import goingOn30 from '../../assets/images/13goingon30.jpg';
+import theSixthSense from '../../assets/images/thesixthsense.jpg';
+import theAmazingSpiderMan from '../../assets/images/theamazingspider-man.jpg';
 
 const stats = [
   { value: "2018", label: "Year Founded" },
