@@ -1,5 +1,17 @@
-import { Typography, Grid, Paper, Box, Stack, Chip, Avatar, Divider, LinearProgress } from '@mui/material';
+import { useMemo, useState } from 'react';
+import {
+  Alert, Avatar, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle,
+  Divider, FormControlLabel, Grid, IconButton, InputAdornment, LinearProgress, MenuItem,
+  Paper, Stack, Switch, TextField, Typography, useMediaQuery,
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
+import SearchIcon from '@mui/icons-material/Search';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import usersSeed from '../../assets/users.json?raw';
 
 const card = {
   p: 2.5, pl: 3, position: 'relative', overflow: 'hidden', transition: 'border-color .25s',
@@ -8,59 +20,308 @@ const card = {
 };
 const num = { fontVariantNumeric: 'tabular-nums' };
 const pulse = { '@keyframes pulse': { '0%,100%': { opacity: 1, transform: 'scale(1)' }, '50%': { opacity: 0.35, transform: 'scale(0.85)' } } };
-const tierColor = { Director: 'primary', Critic: 'success', Premiere: 'secondary', Member: 'default' };
 
-const columns = [
-  {
-    field: 'name', headerName: 'Member', flex: 1.4, minWidth: 240,
-    renderCell: (p) => (
-      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ height: '100%' }}>
-        <Avatar sx={{ width: 34, height: 34, fontSize: 13, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700 }}>
-          {p.row.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-        </Avatar>
-        <Box>
-          <Typography variant="body2" fontWeight={600}>{p.row.name}</Typography>
-          <Typography variant="caption" color="text.secondary">{p.row.email}</Typography>
-        </Box>
-      </Stack>
-    ),
-  },
-  { field: 'tier', headerName: 'Tier', width: 130,
-    renderCell: (p) => <Chip label={p.value} size="small" color={tierColor[p.value]} variant="outlined" /> },
-  { field: 'reviews', headerName: 'Reviews', type: 'number', width: 110 },
-  { field: 'joined', headerName: 'Joined', width: 130 },
-  { field: 'last', headerName: 'Last Login', width: 160 },
-  { field: 'status', headerName: 'Status', width: 120,
-    renderCell: (p) => (
-      <Chip label={p.value} size="small"
-        color={p.value === 'Active' ? 'success' : 'default'}
-        variant={p.value === 'Active' ? 'filled' : 'outlined'} />
-    ),
-  },
-];
+const roles = ['admin', 'editor', 'viewer'];
+const genders = ['male', 'female', 'other'];
 
-const rows = [
-  { id: 1, name: 'Vergel Santiago',  email: 'vergel@cinevault.ph', tier: 'Director', reviews: 142, joined: '2021-03-12', last: '2026-04-24 10:12', status: 'Active' },
-  { id: 2, name: 'Amara Ocampo',     email: 'amara@cinevault.ph',  tier: 'Premiere', reviews: 89,  joined: '2022-06-01', last: '2026-04-23 21:48', status: 'Active' },
-  { id: 3, name: 'Renzo Villanueva', email: 'renzo@cinevault.ph',  tier: 'Critic',   reviews: 203, joined: '2020-11-04', last: '2026-04-24 08:03', status: 'Active' },
-  { id: 4, name: 'Jia Reyes',        email: 'jia@cinevault.ph',    tier: 'Member',   reviews: 22,  joined: '2024-01-17', last: '2026-04-20 19:22', status: 'Inactive' },
-  { id: 5, name: 'Marco Delacruz',   email: 'marco@cinevault.ph',  tier: 'Premiere', reviews: 61,  joined: '2023-02-28', last: '2026-04-22 23:10', status: 'Active' },
-  { id: 6, name: 'Lia Domingo',      email: 'lia@cinevault.ph',    tier: 'Critic',   reviews: 177, joined: '2021-08-22', last: '2026-04-24 11:40', status: 'Active' },
-  { id: 7, name: 'Tomas Aquino',     email: 'tomas@cinevault.ph',  tier: 'Member',   reviews: 14,  joined: '2025-02-09', last: '2026-04-18 14:55', status: 'Inactive' },
-  { id: 8, name: 'Sofia Navarro',    email: 'sofia@cinevault.ph',  tier: 'Director', reviews: 312, joined: '2019-07-06', last: '2026-04-24 09:47', status: 'Active' },
-  { id: 9, name: 'Kian Pascual',     email: 'kian@cinevault.ph',   tier: 'Member',   reviews: 8,   joined: '2025-12-30', last: '2026-04-19 17:11', status: 'Active' },
-];
+const blankForm = {
+  firstName: '',
+  lastName: '',
+  age: '',
+  gender: '',
+  contactNumber: '',
+  email: '',
+  role: 'editor',
+  username: '',
+  password: '',
+  address: '',
+  isActive: true,
+};
+
+const labelize = (value) =>
+  value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : '';
+
+const loadUsers = () => {
+  try {
+    return {
+      users: JSON.parse(usersSeed).map((user, index) => ({
+        id: Number(user.id) || index + 1,
+        firstName: String(user.firstName ?? '').trim(),
+        lastName: String(user.lastName ?? '').trim(),
+        age: String(user.age ?? '').trim(),
+        gender: genders.includes(String(user.gender ?? '').trim().toLowerCase())
+          ? String(user.gender ?? '').trim().toLowerCase()
+          : '',
+        contactNumber: String(user.contactNumber ?? '').trim(),
+        email: String(user.email ?? '').trim().toLowerCase(),
+        role: roles.includes(String(user.role ?? '').trim().toLowerCase())
+          ? String(user.role ?? '').trim().toLowerCase()
+          : 'editor',
+        username: String(user.username ?? '').trim().toLowerCase(),
+        password: String(user.password ?? ''),
+        address: String(user.address ?? '').trim(),
+        isActive: typeof user.isActive === 'boolean' ? user.isActive : true,
+      })),
+      error: '',
+    };
+  } catch {
+    return {
+      users: [],
+      error: 'Unable to read users from src/assets/users.json.',
+    };
+  }
+};
+
+const seed = loadUsers();
+
+const initials = (first, last) =>
+  `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || '?';
+
+const tierByRole = { admin: 'primary', editor: 'secondary', viewer: 'default' };
 
 const UsersPage = () => {
-  const total = rows.length;
-  const active = rows.filter((u) => u.status === 'Active').length;
-  const critics = rows.filter((u) => u.tier === 'Critic' || u.tier === 'Director').length;
-  const reviews = rows.reduce((s, u) => s + u.reviews, 0);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [users, setUsers] = useState(seed.users);
+  const [modal, setModal] = useState({ open: false, id: null });
+  const [form, setForm] = useState(blankForm);
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Enhancement 2: search + dropdown filters
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [genderFilter, setGenderFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const resetForm = () => {
+    setForm({ ...blankForm });
+    setErrors({});
+  };
+
+  const openModal = (user) => {
+    setModal({ open: true, id: user?.id ?? null });
+    setForm(user ? { ...blankForm, ...user } : { ...blankForm });
+    setErrors({});
+  };
+
+  const closeModal = () => {
+    setModal({ open: false, id: null });
+    setShowPassword(false);
+    resetForm();
+  };
+
+  const handleChange = ({ target: { name, value, checked, type } }) => {
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  // Enhancement 3: validation rules
+  const validate = () => {
+    const next = {};
+    const email = form.email.trim().toLowerCase();
+    const username = form.username.trim().toLowerCase();
+    const contact = form.contactNumber.trim();
+    const age = form.age.trim();
+
+    [
+      ['firstName', 'First name'],
+      ['lastName',  'Last name'],
+      ['age',       'Age'],
+      ['gender',    'Gender'],
+      ['contactNumber', 'Contact number'],
+      ['email',     'Email'],
+      ['role',      'Role'],
+      ['username',  'Username'],
+      ['password',  'Password'],
+      ['address',   'Address'],
+    ].forEach(([key, label]) => {
+      if (!String(form[key] ?? '').trim()) {
+        next[key] = `${label} is required.`;
+      }
+    });
+
+    if (!next.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      next.email = 'Enter a valid email address.';
+    }
+    if (!next.email && users.some((u) => u.id !== modal.id && u.email === email)) {
+      next.email = 'Email address already exists.';
+    }
+
+    if (!next.username && /\s/.test(form.username)) {
+      next.username = 'Username must not contain spaces.';
+    }
+    if (!next.username && users.some((u) => u.id !== modal.id && u.username === username)) {
+      next.username = 'Username already exists.';
+    }
+
+    if (!next.password && form.password.length < 8) {
+      next.password = 'Password must be at least 8 characters.';
+    }
+
+    if (!next.contactNumber && !/^\d{11}$/.test(contact)) {
+      next.contactNumber = 'Contact number must be exactly 11 digits.';
+    }
+
+    if (!next.age && !/^\d+$/.test(age)) {
+      next.age = 'Age must be a number only.';
+    }
+
+    return next;
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const nextErrors = validate();
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    const nextUser = {
+      firstName: form.firstName.trim(),
+      lastName:  form.lastName.trim(),
+      age:       form.age.trim(),
+      gender:    form.gender.trim().toLowerCase(),
+      contactNumber: form.contactNumber.trim(),
+      email:     form.email.trim().toLowerCase(),
+      role:      form.role.trim().toLowerCase(),
+      username:  form.username.trim().toLowerCase(),
+      password:  form.password,
+      address:   form.address.trim(),
+      isActive:  form.isActive,
+    };
+
+    setUsers((prev) =>
+      modal.id
+        ? prev.map((u) => (u.id === modal.id ? { ...u, ...nextUser } : u))
+        : [
+            ...prev,
+            {
+              id: prev.reduce((max, u) => Math.max(max, Number(u.id) || 0), 0) + 1,
+              ...nextUser,
+            },
+          ]
+    );
+    closeModal();
+  };
+
+  const toggleStatus = (id) => {
+    setUsers((prev) =>
+      prev.map((u) => (u.id === id ? { ...u, isActive: !u.isActive } : u))
+    );
+  };
+
+  const fieldProps = (name, label, extra = {}) => ({
+    name,
+    label,
+    value: form[name],
+    onChange: handleChange,
+    error: Boolean(errors[name]),
+    helperText: errors[name] || ' ',
+    fullWidth: true,
+    size: 'small',
+    ...extra,
+  });
+
+  // Enhancement 2: filtered rows
+  const filteredUsers = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return users.filter((u) => {
+      if (q) {
+        const haystack = `${u.firstName} ${u.lastName} ${u.email} ${u.username}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      if (roleFilter !== 'all' && u.role !== roleFilter) return false;
+      if (genderFilter !== 'all' && u.gender !== genderFilter) return false;
+      if (statusFilter === 'active' && !u.isActive) return false;
+      if (statusFilter === 'inactive' && u.isActive) return false;
+      return true;
+    });
+  }, [users, search, roleFilter, genderFilter, statusFilter]);
+
+  const total = users.length;
+  const active = users.filter((u) => u.isActive).length;
+  const admins = users.filter((u) => u.role === 'admin').length;
+  const showing = filteredUsers.length;
   const kpis = [
-    { label: 'Cardholders',     value: total,   hint: 'full roster' },
-    { label: 'On the Floor',    value: active,  bar: Math.round((active / total) * 100) },
-    { label: 'Critics & Above', value: critics, hint: 'press-credentialed' },
-    { label: 'Lifetime Reviews', value: reviews, hint: 'since 2019' },
+    { label: 'Cardholders',  value: total,   hint: 'full roster' },
+    { label: 'On the Floor', value: active,  bar: total ? Math.round((active / total) * 100) : 0 },
+    { label: 'Admins',       value: admins,  hint: 'press-credentialed' },
+    { label: 'Showing',      value: showing, hint: 'after filters' },
+  ];
+
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    {
+      field: 'fullName',
+      headerName: 'Member',
+      flex: 1.4,
+      minWidth: 240,
+      valueGetter: (_, row) => `${row.firstName} ${row.lastName}`.trim(),
+      renderCell: (p) => (
+        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ height: '100%' }}>
+          <Avatar sx={{ width: 34, height: 34, fontSize: 13, bgcolor: 'primary.main', color: 'primary.contrastText', fontWeight: 700 }}>
+            {initials(p.row.firstName, p.row.lastName)}
+          </Avatar>
+          <Box>
+            <Typography variant="body2" fontWeight={600}>{`${p.row.firstName} ${p.row.lastName}`}</Typography>
+            <Typography variant="caption" color="text.secondary">{p.row.email}</Typography>
+          </Box>
+        </Stack>
+      ),
+    },
+    { field: 'username', headerName: 'Username', minWidth: 140, flex: 0.8 },
+    { field: 'age', headerName: 'Age', width: 80 },
+    { field: 'gender', headerName: 'Gender', width: 110, valueGetter: (_, row) => labelize(row.gender) },
+    { field: 'contactNumber', headerName: 'Contact', minWidth: 140, flex: 0.9 },
+    {
+      field: 'role',
+      headerName: 'Role',
+      width: 120,
+      renderCell: (p) => <Chip label={labelize(p.row.role)} size="small" color={tierByRole[p.row.role]} variant="outlined" />,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 120,
+      sortable: false,
+      renderCell: (p) => (
+        <Chip
+          size="small"
+          label={p.row.isActive ? 'Active' : 'Inactive'}
+          color={p.row.isActive ? 'success' : 'default'}
+          variant={p.row.isActive ? 'filled' : 'outlined'}
+        />
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      minWidth: 200,
+      sortable: false,
+      filterable: false,
+      renderCell: (p) => (
+        <Stack direction="row" spacing={1} sx={{ py: 0.3 }}>
+          <Button size="small" variant="outlined" onClick={() => openModal(p.row)}>Edit</Button>
+          <Button
+            size="small"
+            variant="contained"
+            disableElevation
+            color={p.row.isActive ? 'warning' : 'success'}
+            onClick={() => toggleStatus(p.row.id)}
+          >
+            {p.row.isActive ? 'Disable' : 'Activate'}
+          </Button>
+        </Stack>
+      ),
+    },
   ];
 
   return (
@@ -72,13 +333,28 @@ const UsersPage = () => {
           <Box sx={{ ...pulse, width: 7, height: 7, borderRadius: '50%', bgcolor: 'primary.main', boxShadow: '0 0 10px #fbbf24', animation: 'pulse 2s ease-in-out infinite' }} />
           <Typography variant="overline" color="primary">House / Roster</Typography>
         </Stack>
-        <Stack direction="row" alignItems="baseline" justifyContent="space-between" flexWrap="wrap" sx={{ width: '100%', rowGap: 0.5 }}>
-          <Typography variant="h4">The House</Typography>
-          <Typography variant="overline" color="text.secondary" sx={num}>
-            {active} in seats · {total - active} at intermission
-          </Typography>
+        <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }} justifyContent="space-between" spacing={2}>
+          <Box>
+            <Typography variant="h4">The House</Typography>
+            <Typography variant="overline" color="text.secondary" sx={num}>
+              {active} in seats · {total - active} at intermission
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            disableElevation
+            startIcon={<PersonAddAlt1Icon sx={{ fontSize: 18 }} />}
+            onClick={() => openModal()}
+            sx={{ width: { xs: '100%', md: 'auto' } }}
+          >
+            Add User
+          </Button>
         </Stack>
       </Box>
+
+      {seed.error ? (
+        <Alert severity="error" sx={{ mb: 2 }}>{seed.error}</Alert>
+      ) : null}
 
       <Grid container spacing={3} mb={3}>
         {kpis.map((k) => (
@@ -99,19 +375,184 @@ const UsersPage = () => {
         ))}
       </Grid>
 
+      {/* Enhancement 2: Search bar + dropdown filters */}
+      <Paper sx={{ p: 2, mb: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1.2} mb={1.5}>
+          <FilterAltIcon sx={{ color: 'primary.main', fontSize: 18 }} />
+          <Typography variant="overline" color="text.secondary">Filter Roster</Typography>
+        </Stack>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 5 }}>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search by first name, last name, email, or username…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+            <TextField select fullWidth size="small" label="Role"
+              value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+              <MenuItem value="all">All roles</MenuItem>
+              {roles.map((r) => (
+                <MenuItem key={r} value={r}>{labelize(r)}</MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+            <TextField select fullWidth size="small" label="Gender"
+              value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)}>
+              <MenuItem value="all">All genders</MenuItem>
+              {genders.map((g) => (
+                <MenuItem key={g} value={g}>{labelize(g)}</MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+            <TextField select fullWidth size="small" label="Status"
+              value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <MenuItem value="all">All statuses</MenuItem>
+              <MenuItem value="active">Active</MenuItem>
+              <MenuItem value="inactive">Inactive</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid size={{ xs: 12, md: 1 }}>
+            <Button
+              fullWidth
+              variant="outlined"
+              size="small"
+              onClick={() => {
+                setSearch('');
+                setRoleFilter('all');
+                setGenderFilter('all');
+                setStatusFilter('all');
+              }}
+              sx={{ height: '100%' }}
+            >
+              Reset
+            </Button>
+          </Grid>
+        </Grid>
+      </Paper>
+
       <Divider sx={{ my: 1.5 }}>
         <Typography variant="overline" color="text.secondary" sx={{ px: 1.5 }}>Member Ledger</Typography>
       </Divider>
-      <Box sx={{ height: 480, mt: 2 }}>
-        <DataGrid
-          rows={rows} columns={columns}
-          initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          rowHeight={60}
-        />
+
+      <Box sx={{ height: 520, mt: 2 }}>
+        {filteredUsers.length ? (
+          <DataGrid
+            rows={filteredUsers}
+            columns={columns}
+            disableRowSelectionOnClick
+            pageSizeOptions={[5, 10]}
+            initialState={{ pagination: { paginationModel: { pageSize: 5, page: 0 } } }}
+            rowHeight={60}
+          />
+        ) : (
+          <Alert severity="info">
+            No users match the current filters. Try clearing search or filters.
+          </Alert>
+        )}
       </Box>
+
+      <Dialog
+        open={modal.open}
+        onClose={closeModal}
+        fullWidth
+        fullScreen={isMobile}
+        maxWidth="md"
+      >
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <DialogTitle>{modal.id ? 'Edit User' : 'Add User'}</DialogTitle>
+          <DialogContent dividers sx={{ px: { xs: 2, sm: 3 }, pt: 1 }}>
+            <Stack spacing={2} sx={{ pt: 1 }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField {...fieldProps('firstName', 'First Name')} />
+                <TextField {...fieldProps('lastName', 'Last Name')} />
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField
+                  {...fieldProps('age', 'Age', {
+                    inputMode: 'numeric',
+                    slotProps: { htmlInput: { pattern: '[0-9]*', maxLength: 3 } },
+                  })}
+                />
+                <TextField {...fieldProps('gender', 'Gender', { select: true })}>
+                  {genders.map((gender) => (
+                    <MenuItem key={gender} value={gender}>{labelize(gender)}</MenuItem>
+                  ))}
+                </TextField>
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField
+                  {...fieldProps('contactNumber', 'Contact Number', {
+                    inputMode: 'numeric',
+                    slotProps: { htmlInput: { pattern: '[0-9]*', maxLength: 11 } },
+                  })}
+                />
+                <TextField {...fieldProps('email', 'Email Address', { type: 'email' })} />
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField {...fieldProps('role', 'Role', { select: true })}>
+                  {roles.map((role) => (
+                    <MenuItem key={role} value={role}>{labelize(role)}</MenuItem>
+                  ))}
+                </TextField>
+                <TextField {...fieldProps('username', 'Username')} />
+              </Stack>
+              <TextField
+                {...fieldProps('password', 'Password', {
+                  type: showPassword ? 'text' : 'password',
+                  slotProps: {
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            onMouseDown={(event) => event.preventDefault()}
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  },
+                })}
+              />
+              <TextField {...fieldProps('address', 'Address', { multiline: true, rows: 3 })} />
+              <FormControlLabel
+                control={
+                  <Switch
+                    name="isActive"
+                    checked={form.isActive}
+                    onChange={handleChange}
+                  />
+                }
+                label={form.isActive ? 'User status: Active' : 'User status: Inactive'}
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button onClick={closeModal}>Cancel</Button>
+            <Button type="submit" variant="contained" disableElevation>
+              {modal.id ? 'Update User' : 'Save User'}
+            </Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
     </Box>
   );
 };

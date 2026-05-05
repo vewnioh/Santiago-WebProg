@@ -1,0 +1,80 @@
+[
+  {
+    "firstName": "Vergel",
+    "lastName": "Santiago",
+    "age": "27",
+    "gender": "male",
+    "contactNumber": "09171234567",
+    "email": "vergel.santiago@cinevault.ph",
+    "role": "admin",
+    "username": "vergelsantiago",
+    "password": "Vergel123!",
+    "address": "Sampaloc, Manila, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Amara",
+    "lastName": "Ocampo",
+    "age": "31",
+    "gender": "female",
+    "contactNumber": "09182345678",
+    "email": "amara.ocampo@cinevault.ph",
+    "role": "editor",
+    "username": "amaraocampo",
+    "password": "Amara123!",
+    "address": "Tondo, Manila, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Renzo",
+    "lastName": "Villanueva",
+    "age": "26",
+    "gender": "male",
+    "contactNumber": "09193456789",
+    "email": "renzo.villanueva@cinevault.ph",
+    "role": "editor",
+    "username": "renzovillanueva",
+    "password": "Renzo123!",
+    "address": "Quezon City, Metro Manila",
+    "isActive": false
+  },
+  {
+    "firstName": "Jia",
+    "lastName": "Reyes",
+    "age": "34",
+    "gender": "female",
+    "contactNumber": "09214567890",
+    "email": "jia.reyes@cinevault.ph",
+    "role": "viewer",
+    "username": "jiareyes",
+    "password": "JiaReyes1!",
+    "address": "Pasig City, Metro Manila",
+    "isActive": true
+  },
+  {
+    "firstName": "Marco",
+    "lastName": "Delacruz",
+    "age": "28",
+    "gender": "male",
+    "contactNumber": "09225678901",
+    "email": "marco.delacruz@cinevault.ph",
+    "role": "viewer",
+    "username": "marcodelacruz",
+    "password": "Marco123!",
+    "address": "Makati City, Metro Manila",
+    "isActive": false
+  },
+  {
+    "firstName": "Sofia",
+    "lastName": "Navarro",
+    "age": "33",
+    "gender": "female",
+    "contactNumber": "09236789012",
+    "email": "sofia.navarro@cinevault.ph",
+    "role": "admin",
+    "username": "sofianavarro",
+    "password": "Sofia123!",
+    "address": "Taguig City, Metro Manila",
+    "isActive": true
+  }
+]
